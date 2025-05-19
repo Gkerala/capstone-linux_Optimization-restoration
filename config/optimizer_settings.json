@@ -1,0 +1,99 @@
+{
+    "performance_optimization": {
+        "cpu": {
+            "enable_scheduler_tuning": false,
+            "governor": "performance",
+            "priority_processes": [
+                "python3",
+                "nginx"
+            ]
+        },
+        "io": {
+            "enable": true,
+            "scheduler": "deadline",
+            "read_ahead_kb": 128
+        }
+    },
+    "memory_optimization": {
+        "swappiness": 10,
+        "drop_caches_on_schedule": true,
+        "drop_cache_mode": 3,
+        "low_memory_threshold_percent": 15
+    },
+    "service_management": {
+        "disable_services": [
+            "cups",
+            "bluetooth",
+            "avahi-daemon"
+        ],
+        "zombie_cleanup": {
+            "enable": true,
+            "check_interval_minutes": 30
+        }
+    },
+    "automation": {
+        "use_crontab": true,
+        "scheduled_tasks": [
+            "{'name': 'memory_cache_cleaner', 'schedule': '0 */6 * * *', 'command': 'sync; echo 3 > /proc/sys/vm/drop_caches'}",
+            "{'name': 'zombie_checker', 'schedule': '*/30 * * * *', 'command': \"ps -eo stat,ppid | awk '$1 ~ /Z/ { print $2 }' | xargs -r kill -9\"}"
+        ]
+    },
+    "security_hardening": {
+        "firewall": {
+            "enable": true,
+            "allowed_ports": [
+                22,
+                80,
+                443
+            ],
+            "deny_all_by_default": true
+        },
+        "ssh": {
+            "permit_root_login": "no",
+            "password_authentication": "no",
+            "protocol": 2,
+            "max_auth_tries": 3
+        }
+    },
+    "disk_optimization": {
+        "enable_defrag": true,
+        "defrag_paths": [
+            "/home",
+            "/var"
+        ],
+        "inode_cleanup": {
+            "enable": true,
+            "target_paths": [
+                "/tmp",
+                "/var/tmp"
+            ],
+            "remove_empty_dirs": true
+        }
+    },
+    "restore_settings": {
+        "auto_backup": true,
+        "backup_interval_hours": 24,
+        "backup_location": "/home/user/backups",
+        "backup_format": "zip",
+        "restore_cycle_days": 7,
+        "restore_points": 5
+    },
+    "log_management": {
+        "enable": true,
+        "log_level": "INFO",
+        "log_file_path": "logs/system.log",
+        "max_log_size_mb": 50
+    },
+    "notification_settings": {
+        "enable": true,
+        "notify_on_completion": true,
+        "notify_on_failure": true,
+        "notification_method": [
+            "email",
+            "desktop"
+        ]
+    },
+    "custom_settings": {
+        "user_defined_options": {}
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "os": "Linux",
+    "architecture": "64bit",
+    "cpu_count": 2,
+    "memory_total_gb": 3.78,
+    "disk_usage": {
+        "total_gb": 19.02,
+        "used_gb": 11.87,
+        "free_gb": 6.16,
+        "usage_percent": 65.8
+    },
+    "network_interfaces": [
+        "lo",
+        "ens33"
+    ],
+    "filesystem": {
+        "root_partition": "/",
+        "filesystem_type": "ext4"
+    }
+}
