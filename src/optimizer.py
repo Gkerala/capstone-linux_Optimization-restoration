@@ -111,9 +111,10 @@ def optimize_services(service_config):
 def harden_security(security_config):
     fw = security_config.get("firewall", {})
     if fw.get("enable"):
-        run_command("ufw default deny")
-        for port in fw.get("allowed_ports", []):
-            run_command(f"ufw allow {port}")
+        run_command("ufw default allow incoming")
+        run_command("ufw default allow outgoing")
+        for port in fw.get("blocked_ports", []):
+            run_command(f"ufw deny {port}")
         run_command("ufw enable")
 
     ssh = security_config.get("ssh", {})
