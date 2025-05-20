@@ -103,10 +103,21 @@ def get_optimizer_settings():
         "disk_optimization": {
             "enable_defrag": True,
             "defrag_paths": ["/home", "/var"],
+
             "inode_cleanup": {
                 "enable": True,
-                "target_paths": ["/tmp", "/var/tmp"],
-                "remove_empty_dirs": True
+                "target_paths": ["/var/log", "/lib"],
+                "min_file_age_minutes": 0,
+                "remove_empty_dirs": True,
+                "log_file_path": "/var/log/inode_cleanup.log"
+            },
+
+            "temp_cleanup": {
+                "enable": True,
+                "target_paths": ["/tmp", "/download"],
+                "min_file_age_minutes": 10,
+                "remove_empty_dirs": True,
+                "log_file_path": "/var/log/temp_cleanup.log"
             }
         },
 

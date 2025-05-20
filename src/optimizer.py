@@ -132,6 +132,38 @@ def harden_security(security_config):
 
     run_command("systemctl restart sshd")
 
+def cleanup_inode_targets(
+    target_paths,
+    remove_empty_dirs=True,
+    min_file_age_minutes=0,
+    log_file="/var/log/inode_cleanup.log"
+):
+    now = time.time()
+
+    for root_path in target_paths:
+        for root, dirs, files in os.walk(root_path, topdown=False):
+            for name in files:
+                filepath = os.path.join(root, name)
+                try:
+                    age_minutes = (now - os.path.getmtime(filepath)) / 60
+                    if os.path.getsize(filepath) == 0 and age_minutes >= min_file_age_minutes:
+                        os.remove(filepath)
+                        with open(log_file, "a") as log:
+                            log.write(f"{time.ctime()} - Deleted empty file: {filepath}\n")
+                except Exception:
+                    continue
+
+            if remove_empty_dirs:
+                for name in dirs:
+                    dirpath = os.path.join(root, name)
+                    try:
+                        if not os.listdir(dirpath):
+                            os.rmdir(dirpath)
+                            with open(log_file, "a") as log:
+                                log.write(f"{time.ctime()} - Deleted empty directory: {dirpath}\n")
+                    except Exception:
+                        continue
+
 # 6. 디스크 최적화
 def optimize_disk(disk_config):
     if is_virtual_machine():
@@ -142,12 +174,25 @@ def optimize_disk(disk_config):
         for path in disk_config.get("defrag_paths", []):
             run_command(f"e4defrag {path}")
 
+    # 2. inode cleanup (고정형 시스템 경로, 생존시간 X)
     inode_cfg = disk_config.get("inode_cleanup", {})
     if inode_cfg.get("enable"):
-        for path in inode_cfg.get("target_paths", []):
-            run_command(f"find {path} -type f -empty -delete")
-            if inode_cfg.get("remove_empty_dirs"):
-                run_command(f"find {path} -type d -empty -delete")
+        cleanup_inode_targets(
+            target_paths=inode_cfg.get("target_paths", []),
+            remove_empty_dirs=inode_cfg.get("remove_empty_dirs", True),
+            min_file_age_minutes=0,  # 필터링 없음
+            log_file="/var/log/inode_cleanup.log"
+        )
+
+    # 3. temp cleanup (더미 경로 + 생존시간 필터)
+    temp_cfg = disk_config.get("temp_cleanup", {})
+    if temp_cfg.get("enable"):
+        cleanup_inode_targets(
+            target_paths=temp_cfg.get("target_paths", ["/tmp", "/download"]),
+            remove_empty_dirs=True,
+            min_file_age_minutes=temp_cfg.get("min_file_age_minutes", 10),
+            log_file=temp_cfg.get("log_file_path", "/var/log/temp_cleanup.log")
+        )
 
 # 메인 함수
 def optimize_system():
