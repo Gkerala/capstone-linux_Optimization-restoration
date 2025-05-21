@@ -53,4 +53,4 @@ git push -u origin main
 sudo PYTHONPATH=. python3 src/optimizer.py
 
 ## 최적화 기능 진단 실행
-sudo PYTHONPATH=. python3 src/test_optimizer.py
+sudo PYTHONPATH=. python3 tests/test_optimizer.py
