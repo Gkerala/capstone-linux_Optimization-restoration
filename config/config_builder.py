@@ -88,9 +88,9 @@ def get_optimizer_settings():
 
         "security_hardening": {
             "firewall": {
-                "enable": True,
-                "blocked_ports": [22, 80, 443],
-                "deny_all_by_default": False
+                "enable": true,
+                "blocked_ports": [8888, 9999, 7777],
+                "deny_all_by_default": true
             },
             "ssh": {
                 "permit_root_login": "no",
