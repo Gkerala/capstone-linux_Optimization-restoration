@@ -104,20 +104,17 @@ def get_optimizer_settings():
             "enable_defrag": True,
             "defrag_paths": ["/home", "/var"],
 
-            "inode_cleanup": {
-                "enable": True,
-                "target_paths": ["/var/log", "/lib"],
-                "min_file_age_minutes": 0,
-                "remove_empty_dirs": True,
-                "log_file_path": "/var/log/inode_cleanup.log"
-            },
-
-            "temp_cleanup": {
-                "enable": True,
-                "target_paths": ["/tmp", "/download"],
-                "min_file_age_minutes": 10,
-                "remove_empty_dirs": True,
-                "log_file_path": "/var/log/temp_cleanup.log"
+            "unified_cleanup": {
+                "enable": true,
+                "target_paths": [
+                "/tmp",
+                "/download",
+                "/var/tmp",
+                "/var/cache/apt/archives"
+                ],
+                "min_file_age_minutes": 30,
+                "remove_empty_dirs": true,
+                "log_file_path": "/var/log/unified_cleanup.log"
             }
         },
 

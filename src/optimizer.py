@@ -174,24 +174,14 @@ def optimize_disk(disk_config):
         for path in disk_config.get("defrag_paths", []):
             run_command(f"e4defrag {path}")
 
-    # 2. inode cleanup (고정형 시스템 경로, 생존시간 X)
-    inode_cfg = disk_config.get("inode_cleanup", {})
-    if inode_cfg.get("enable"):
+    # 2. 통합 정리 unified_cleanup
+    cleanup_cfg = disk_config.get("unified_cleanup", {})
+    if cleanup_cfg.get("enable"):
         cleanup_inode_targets(
-            target_paths=inode_cfg.get("target_paths", []),
-            remove_empty_dirs=inode_cfg.get("remove_empty_dirs", True),
-            min_file_age_minutes=0,  # 필터링 없음
-            log_file="/var/log/inode_cleanup.log"
-        )
-
-    # 3. temp cleanup (더미 경로 + 생존시간 필터)
-    temp_cfg = disk_config.get("temp_cleanup", {})
-    if temp_cfg.get("enable"):
-        cleanup_inode_targets(
-            target_paths=temp_cfg.get("target_paths", ["/tmp", "/download"]),
-            remove_empty_dirs=True,
-            min_file_age_minutes=temp_cfg.get("min_file_age_minutes", 10),
-            log_file=temp_cfg.get("log_file_path", "/var/log/temp_cleanup.log")
+            target_paths=cleanup_cfg.get("target_paths", []),
+            remove_empty_dirs=cleanup_cfg.get("remove_empty_dirs", True),
+            min_file_age_minutes=cleanup_cfg.get("min_file_age_minutes", 30),
+            log_file=cleanup_cfg.get("log_file_path", "/var/log/unified_cleanup.log")
         )
 
 # 메인 함수
