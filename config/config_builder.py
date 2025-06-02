@@ -124,7 +124,13 @@ def get_optimizer_settings():
             "backup_location": str(backup_location),
             "backup_format": "zip",
             "restore_cycle_days": 7,
-            "restore_points": 5
+            "restore_points": 5,
+            "restore_targets": {
+            "sshd_config": "/etc/ssh/sshd_config",
+            "sysctl.conf": "/etc/sysctl.conf",
+            "crontab": "/var/spool/cron/crontabs/root",
+            "optimizer_config": "config/optimizer_settings.json"
+            }   
         },
 
         "log_management": {
