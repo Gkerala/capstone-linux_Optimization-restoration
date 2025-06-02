@@ -88,9 +88,9 @@ def get_optimizer_settings():
 
         "security_hardening": {
             "firewall": {
-                "enable": true,
+                "enable": True,
                 "blocked_ports": [8888, 9999, 7777],
-                "deny_all_by_default": true
+                "deny_all_by_default": True
             },
             "ssh": {
                 "permit_root_login": "no",
@@ -105,7 +105,7 @@ def get_optimizer_settings():
             "defrag_paths": ["/home", "/var"],
 
             "unified_cleanup": {
-                "enable": true,
+                "enable": True,
                 "target_paths": [
                 "/tmp",
                 "/download",
@@ -113,7 +113,7 @@ def get_optimizer_settings():
                 "/var/cache/apt/archives"
                 ],
                 "min_file_age_minutes": 30,
-                "remove_empty_dirs": true,
+                "remove_empty_dirs": True,
                 "log_file_path": "/var/log/unified_cleanup.log"
             }
         },
