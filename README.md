@@ -31,7 +31,12 @@ source venv/bin/activate  # Linux/macOS
 deactivate
 
 ## 필수 패키지 설치
-pip install -r requirements.txt
+
+sudo apt install python3-pip
+
+sudo apt install python3-tk
+
+sudo pip install -r requirements.txt
 
 {
 
