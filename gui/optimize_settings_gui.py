@@ -19,6 +19,9 @@ class SettingEditor:
         self.update_button = tk.Button(master, text="Update Selected", command=self.update_selected)
         self.update_button.pack(fill=tk.X)
 
+        self.save_button = tk.Button(master, text="Save Config", command=self.save_config)
+        self.save_button.pack(fill=tk.X)
+
     def load_config(self):
         try:
             with open(CONFIG_PATH) as f:
@@ -56,7 +59,7 @@ class SettingEditor:
             messagebox.showinfo("Info", "Can't edit complex structures directly.")
             return
 
-        new_value = simpledialog.askstring("Update", f"Enter new value for {'/'.join(key_path)}:", initialvalue=current_value)
+        new_value = simpledialog.askstring("Update", f"Enter new value for {'/'.join(key_path)}:", initialvalue=str(current_value))
         if new_value is None:
             return
 
@@ -71,11 +74,16 @@ class SettingEditor:
             ref = ref[key]
         ref[key_path[-1]] = parsed_value
 
-        with open(CONFIG_PATH, "w") as f:
-            json.dump(self.config, f, indent=4)
-
         self.tree.item(selected, values=(parsed_value,))
-        messagebox.showinfo("Success", "Config updated successfully!")
+        messagebox.showinfo("Pending Save", "Value updated. Click 'Save Config' to apply changes.")
+
+    def save_config(self):
+        try:
+            with open(CONFIG_PATH, "w") as f:
+                json.dump(self.config, f, indent=4)
+            messagebox.showinfo("Success", "Configuration successfully saved.")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save config: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
