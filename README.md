@@ -36,6 +36,8 @@ sudo apt install python3-pip
 
 sudo apt install python3-tk
 
+sudo apt install timeshift
+
 sudo pip install -r requirements.txt
 
 {

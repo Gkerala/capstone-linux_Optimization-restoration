@@ -5,6 +5,7 @@ import gzip
 import json
 from datetime import datetime
 from pathlib import Path
+from tkinter import filedialog, messagebox
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -12,7 +13,7 @@ logger = get_logger(__name__)
 CONFIG_PATH = Path("config/optimizer_settings.json")
 CUSTOM_BACKUP_DIR = Path("custom_backups")
 BACKUP_ROOT = Path("backups")
-TIMESHIFT_CMD = shutil.which("timeshift") or "timeshift"
+TIMESHIFT_CMD = "timeshift"
 
 # 사용자 정의 백업 대상 로드
 def load_custom_paths():
@@ -24,13 +25,38 @@ def load_custom_paths():
         logger.error(f"[설정 로드 실패] 사용자 정의 경로 로딩 실패: {e}")
         return []
 
+def save_custom_path(path):
+    try:
+        with open(CONFIG_PATH) as f:
+            config = json.load(f)
+
+        paths = config.get("restore_settings", {}).get("custom_backup", {}).get("paths", [])
+        if path not in paths:
+            paths.append(path)
+            config["restore_settings"]["custom_backup"]["paths"] = paths
+            with open(CONFIG_PATH, "w") as f:
+                json.dump(config, f, indent=4)
+            messagebox.showinfo("성공", f"경로 추가됨: {path}")
+        else:
+            messagebox.showinfo("정보", "이미 등록된 경로입니다.")
+    except Exception as e:
+        logger.error(f"[경로 저장 실패] {e}")
+        messagebox.showerror("오류", f"경로 저장 실패: {e}")
+
+def select_file_for_backup():
+    file_path = filedialog.askopenfilename(title="파일 선택")
+    if file_path:
+        save_custom_path(file_path)
+
+def select_directory_for_backup():
+    dir_path = filedialog.askdirectory(title="디렉토리 선택")
+    if dir_path:
+        save_custom_path(dir_path)
+
 def compress_file(src_path, dest_path):
-    if os.path.isdir(src_path):
-        shutil.make_archive(dest_path, 'gztar', src_path)
-    else:
-        with open(src_path, 'rb') as f_in:
-            with gzip.open(dest_path.with_suffix(dest_path.suffix + ".gz"), 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
+    with open(src_path, 'rb') as f_in:
+        with gzip.open(dest_path.with_suffix(dest_path.suffix + ".gz"), 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
 
 # 사용자 정의 백업 생성
 def custom_backup():
@@ -42,9 +68,12 @@ def custom_backup():
         try:
             name = Path(path).name
             dest = backup_path / name
-            if os.path.exists(path):
+            if os.path.isfile(path):
                 compress_file(path, dest)
                 logger.info(f"[사용자 정의 백업] {path} -> {dest}.gz")
+            elif os.path.isdir(path):
+                archive_path = shutil.make_archive(str(dest), 'gztar', path)
+                logger.info(f"[사용자 정의 백업 - 디렉토리] {path} -> {archive_path}")
             else:
                 logger.warning(f"[사용자 정의 백업 누락] 존재하지 않음: {path}")
         except Exception as e:
@@ -62,11 +91,13 @@ def list_custom_backups():
 # 사용자 정의 복원
 def restore_custom_backup(file_path, restore_dest):
     try:
-        if str(file_path).endswith(".tar.gz"):
-            shutil.unpack_archive(file_path, restore_dest)
-        else:
-            with gzip.open(file_path, 'rb') as f_in, open(os.path.join(restore_dest, Path(file_path).stem), 'wb') as f_out:
+        if file_path.suffix == ".gz":
+            with gzip.open(file_path, 'rb') as f_in, open(os.path.join(restore_dest, file_path.stem), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
+        elif file_path.suffixes[-2:] == ['.tar', '.gz'] or file_path.suffix == ".tar.gz":
+            shutil.unpack_archive(str(file_path), extract_dir=restore_dest)
+        else:
+            raise Exception("지원하지 않는 형식")
         return True
     except Exception as e:
         logger.error(f"[복원 실패] {file_path} -> {restore_dest} | 오류: {e}")
@@ -83,9 +114,6 @@ def delete_custom_backup(file_path):
 
 # Timeshift 스냅샷 생성
 def create_timeshift_snapshot():
-    if shutil.which("timeshift") is None:
-        logger.error("❌ Timeshift가 설치되어 있지 않습니다.")
-        return False
     try:
         result = subprocess.run(["sudo", TIMESHIFT_CMD, "--create", "--comments", "Snapshot by Linux Optimizer GUI"], capture_output=True, text=True)
         if result.returncode == 0:
@@ -100,9 +128,6 @@ def create_timeshift_snapshot():
 
 # Timeshift 스냅샷 목록
 def list_timeshift_snapshots():
-    if shutil.which("timeshift") is None:
-        logger.error("❌ Timeshift가 설치되어 있지 않습니다.")
-        return "Timeshift가 설치되어 있지 않습니다."
     try:
         result = subprocess.run(["sudo", TIMESHIFT_CMD, "--list"], capture_output=True, text=True)
         return result.stdout
