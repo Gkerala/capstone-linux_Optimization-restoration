@@ -3,12 +3,12 @@ def run_optimizer_with_feedback():
     result_window.title("최적화 진행 상태")
     result_window.geometry("400x350")
 
-    status_labels = {}
     optim_items = ["CPU", "I/O", "Memory", "Services", "Disk", "Security"]
+    status_labels = {}
 
     for i, label in enumerate(optim_items):
         status_labels[label] = tk.Label(result_window, text=f"{label} 최적화: ⏳ 대기 중...")
-        status_labels[label].grid(row=i, column=0, sticky="w", padx=10, pady=3)
+        status_labels[label].grid(row=i, column=0, sticky="w", padx=10, pady=5)
 
     result_label = tk.Label(result_window, text="⌛ 최적화 중...", fg="blue")
     result_label.grid(row=len(optim_items), column=0, pady=10)
@@ -20,9 +20,7 @@ def run_optimizer_with_feedback():
             stderr=subprocess.STDOUT,
             text=True
         )
-
         output = result.stdout
-        print("[DEBUG] 최적화 출력 로그:\n", output)  # 개발 중 확인용
 
         for label in optim_items:
             if f"[PASS] {label}" in output:
