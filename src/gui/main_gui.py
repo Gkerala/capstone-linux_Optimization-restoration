@@ -55,7 +55,7 @@ def launch_optimizer_settings():
 
 def launch_config_builder():
     try:
-        subprocess.run([sys.executable, "src/utils/config_builder.py"], check=True)
+        subprocess.run([sys.executable, "config/config_builder.py"], check=True)
         messagebox.showinfo("설정 완료", "기본 설정 파일이 성공적으로 생성되었습니다.")
     except subprocess.CalledProcessError as e:
         messagebox.showerror("오류", f"기본 설정 설치 실패:\n{e}")
