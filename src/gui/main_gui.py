@@ -8,21 +8,21 @@ from pathlib import Path
 
 CONFIG_PATH = Path("config/optimizer_settings.json")
 
-# 최적화 기능 상태 확인용 체크박스 변수 저장
-optimization_checks = {
-    "CPU": IntVar(),
-    "I/O": IntVar(),
-    "Memory": IntVar(),
-    "Services": IntVar(),
-    "Disk": IntVar(),
-    "Security": IntVar()
-}
-
 def run_optimizer_with_feedback():
     """최적화 실행 후 결과를 시각적으로 보여주는 창 생성"""
     result_window = Toplevel()
     result_window.title("최적화 진행 상태")
     result_window.geometry("400x350")
+
+    # 최적화 기능 상태 확인용 체크박스 변수 저장
+    optimization_checks = {
+        "CPU": IntVar(),
+        "I/O": IntVar(),
+        "Memory": IntVar(),
+        "Services": IntVar(),
+        "Disk": IntVar(),
+        "Security": IntVar()
+    }
 
     for i, (label, var) in enumerate(optimization_checks.items()):
         cb = Checkbutton(result_window, text=label + " 최적화", variable=var)
