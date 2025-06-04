@@ -80,4 +80,7 @@ sudo PYTHONPATH=. python3 src/optimizer.py
 ## 최적화 기능 진단 실행
 sudo PYTHONPATH=. python3 tests/test_optimizer.py
 
+## GitHub에서 다운로드
+
+git pull origin main
 
