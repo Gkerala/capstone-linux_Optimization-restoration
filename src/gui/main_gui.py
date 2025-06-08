@@ -3,39 +3,36 @@ from tkinter import messagebox, Toplevel
 import subprocess
 import sys
 sys.path.append('.')
-from tests.test_optimizer import run_tests  # 최적화 테스트 모듈 임포트
+import os
+import json
+from pathlib import Path
+
+CONFIG_PATH = Path("config/optimizer_settings.json")
 
 def show_optimization_result():
     result_window = Toplevel()
     result_window.title("최적화 결과 상태")
-    result_window.geometry("400x400")
+    result_window.geometry("600x600")
 
     try:
-        # 최적화 실행
         subprocess.run("sudo PYTHONPATH=. python3 src/optimizer.py", shell=True, check=True)
     except subprocess.CalledProcessError as e:
         messagebox.showerror("오류", f"최적화 실행 실패:\n{e}")
         return
 
     try:
-        result_data = run_tests()  # 예: {"CPU": "✅", "Disk": "❌", ...}
+        from tests.test_optimizer import run_tests
+        results = run_tests()
     except Exception as e:
         messagebox.showerror("오류", f"최적화 테스트 실패: {e}")
         return
 
     row = 0
-    for key, val in result_data.items():
-        if isinstance(val, dict):
-            tk.Label(result_window, text=f"{key} 최적화 결과:", font=("Arial", 11, "bold")).grid(row=row, column=0, sticky="w", padx=10, pady=3)
-            row += 1
-            for sub_key, sub_val in val.items():
-                tk.Label(result_window, text=f"    {sub_key} : {sub_val}", font=("Arial", 10)).grid(row=row, column=0, sticky="w", padx=20)
-                row += 1
-        else:
-            tk.Label(result_window, text=f"{key} 최적화 결과: {val}", font=("Arial", 11)).grid(row=row, column=0, sticky="w", padx=10, pady=5)
-            row += 1
+    for category, status in results.items():
+        tk.Label(result_window, text=f"{category} : {status}", font=("Arial", 11), anchor="w").grid(row=row, column=0, sticky="w", padx=10, pady=5)
+        row += 1
 
-    tk.Label(result_window, text="✔️ 최적화 테스트 완료", fg="green").grid(row=row, column=0, pady=10)
+    tk.Label(result_window, text="✔️ 최적화 테스트 완료", fg="green").grid(row=row + 1, column=0, pady=10)
 
 def launch_restore():
     try:
