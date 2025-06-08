@@ -95,6 +95,79 @@ def test_disk(disk_cfg):
                 print_result("정리 로그 존재 여부", len(lines) > 0, f"{len(lines)}개 로그 존재")
         else:
             print_result("정리 로그 존재 여부", False, "로그 파일 없음")
+            
+def run_tests():
+    config = load_config()
+
+    results = {}
+
+    # CPU
+    try:
+        cpu_cfg = config["performance_optimization"]["cpu"]
+        with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
+            current = f.read().strip()
+        results["CPU"] = "✅" if current == cpu_cfg.get("governor") else "❌"
+    except:
+        results["CPU"] = "⚠️"
+
+    # IO
+    try:
+        io_cfg = config["performance_optimization"]["io"]
+        if io_cfg.get("enable"):
+            sched = subprocess.getoutput("cat /sys/block/sda/queue/scheduler")
+            results["I/O"] = "✅" if io_cfg["scheduler"] in sched else "❌"
+        else:
+            results["I/O"] = "⚠️"
+    except:
+        results["I/O"] = "⚠️"
+
+    # Memory
+    try:
+        mem_cfg = config["memory_optimization"]
+        current = subprocess.getoutput("cat /proc/sys/vm/swappiness").strip()
+        results["Memory"] = "✅" if str(mem_cfg["swappiness"]) == current else "❌"
+    except:
+        results["Memory"] = "⚠️"
+
+    # Services
+    try:
+        service_cfg = config["service_management"]
+        failed = False
+        for svc in service_cfg.get("disable_services", []):
+            state = subprocess.getoutput(f"systemctl is-enabled {svc}")
+            if "disabled" not in state:
+                failed = True
+                break
+        results["Services"] = "✅" if not failed else "❌"
+    except:
+        results["Services"] = "⚠️"
+
+    # Firewall
+    try:
+        fw_cfg = config["security_hardening"]["firewall"]
+        status = subprocess.getoutput("ufw status")
+        if fw_cfg.get("enable"):
+            results["Security"] = "✅" if "Status: active" in status else "❌"
+        else:
+            results["Security"] = "✅" if "Status: inactive" in status else "❌"
+    except:
+        results["Security"] = "⚠️"
+
+    # Disk Cleanup Log
+    try:
+        disk_cfg = config["disk_optimization"]
+        log_path = disk_cfg.get("unified_cleanup", {}).get("log_file_path", "/var/log/unified_cleanup.log")
+        if os.path.exists(log_path):
+            with open(log_path) as f:
+                lines = f.readlines()
+                results["Disk"] = "✅" if len(lines) > 0 else "❌"
+        else:
+            results["Disk"] = "❌"
+    except:
+        results["Disk"] = "⚠️"
+
+    return results
+
 
 def main():
     config = load_config()

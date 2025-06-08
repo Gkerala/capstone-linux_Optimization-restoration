@@ -4,6 +4,7 @@ from src.utils.logger import get_logger
 from src.utils.config import ConfigLoader
 from src.utils.system import is_virtual_machine
 import psutil  
+import re
 
 logger = get_logger(__name__)
 

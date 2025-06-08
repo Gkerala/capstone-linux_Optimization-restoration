@@ -38,6 +38,8 @@ sudo apt install python3-tk
 
 sudo apt install timeshift
 
+sudo apt install openssh-server
+
 sudo pip install -r requirements.txt
 
 {
@@ -53,8 +55,6 @@ sudo pip install -r requirements.txt
     jsonschema
     
     pytest>=7.4.0
-
-    openssh-server -y
     
 }
 
