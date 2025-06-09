@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 sys.path.append('.')
 from src.restore import (
+    custom_directory_backup,
     custom_backup,
     list_custom_backups,
     restore_custom_backup,
@@ -11,8 +12,7 @@ from src.restore import (
     create_timeshift_snapshot,
     list_timeshift_snapshots,
     restore_timeshift,
-    delete_timeshift,
-    input_directory_and_backup
+    delete_timeshift
 )
 
 CUSTOM_BACKUP_DIR = Path("custom_backups")
@@ -36,7 +36,7 @@ class RestoreGUI:
         instructions = (
             "==== 복원 기능 선택 ===="
             "\n1. 사용자 정의 백업 생성"
-            "\n2. 사용자 정의 백업 디렉토리 생성"
+            "\n2. 사용자 정의 디렉토리 백업 생성"
             "\n3. 사용자 정의 백업 목록 확인"
             "\n4. 사용자 정의 백업 복원"
             "\n5. 사용자 정의 백업 삭제"
@@ -54,7 +54,7 @@ class RestoreGUI:
         if choice == "1":
             result = custom_backup()
         elif choice == "2":
-            result = input_directory_and_backup()
+            result = custom_directory_backup()
         elif choice == "3":
             backups = list_custom_backups()
             if backups:
