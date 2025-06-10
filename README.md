@@ -7,14 +7,23 @@
 ## 프로젝트 구조
 
 ├── src/                  # 최적화, 복원, 설정 로직
+
 │   ├── optimizer.py
+
 │   ├── restore.py
+
 │   └── gui/              # GUI 인터페이스 구성
+
 │       ├── main_gui_redesign.py
+
 │       └── sections/
+
 ├── config/               # 설정 JSON (optimizer_settings.json)
+
 ├── logs/                 # 실행 로그 기록
+
 ├── tests/                # 최적화 기능 테스트
+
 └── README.md             # 설명 문서
 
 ---
