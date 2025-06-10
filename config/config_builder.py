@@ -114,7 +114,7 @@ def get_optimizer_settings():
                 ],
                 "min_file_age_minutes": 30,
                 "remove_empty_dirs": True,
-                "log_file_path": "/var/log/unified_cleanup.log"
+                "log_file_path": "logs/unified_cleanup.log"
             }
         },
 
