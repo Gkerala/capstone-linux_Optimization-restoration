@@ -37,7 +37,7 @@
 
 cd capstone-linux_Optimization-restoration-main/ # 기준
 
-python3 src/gui/main_gui_redesign.py
+sudo python3 src/gui/main_gui_redesign.py
 
 #GUI는 좌측 사이드 네비게이션을 통해 세 가지 탭을 제공합니다:
 
