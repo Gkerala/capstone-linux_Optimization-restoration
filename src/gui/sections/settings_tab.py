@@ -76,7 +76,7 @@ def create_settings_tab(notebook):
     # 기본 설정 설치 버튼
     def install_defaults():
         try:
-            subprocess.run(["python3", "src/utils/config_builder.py"], check=True)
+            subprocess.run(["python3", "config/config_builder.py"], check=True)
             messagebox.showinfo("성공", "기본 설정이 생성되었습니다.")
         except subprocess.CalledProcessError as e:
             messagebox.showerror("실패", f"기본 설정 생성 실패:\n{e}")
