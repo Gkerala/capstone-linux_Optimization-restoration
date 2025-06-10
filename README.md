@@ -145,12 +145,19 @@ sudo 권한이 필요한 기능이 많으므로 GUI 및 스크립트 실행 시 
 ### `restore_settings` 복원 설정
 
 `auto_backup`          :`true`일 경우 시스템이 자동으로 사용자 정의 백업을 수행합니다. 
+
 `backup_interval_hours`: 자동 백업 주기 (시간 단위). 예: `24`이면 매일 1회 백업. 
+
 `backup_location`      : 백업 파일이 저장될 디렉토리 경로 (기본: `/home/사용자명/backups`). 
+
 `backup_format`        : 백업 포맷 지정 (예: `"zip"` 또는 `"tar.gz"`). 현재 tar.gz만 사용. 
+
 `restore_cycle_days`   : 백업을 복원 지점으로 보관할 최대 일 수. 이보다 오래된 백업은 삭제될 수 있음. 
+
 `restore_points`       : 최대 복원 포인트 개수. 초과 시 가장 오래된 백업이 제거됨. 
+
 `restore_targets`      : 복원 대상으로 지정한 시스템 설정 파일들의 경로를 명시. 예: `sshd_config`, `sysctl.conf` 등. 
+
 `custom_backup.paths`  :사용자가 수동으로 지정한 백업 경로 리스트. GUI나 설정 파일로 직접 추가 가능. 
 
 ---
