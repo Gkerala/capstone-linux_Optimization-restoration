@@ -98,10 +98,10 @@ def create_restore_tab(notebook):
             logger.error(msg)
 
     # 버튼들
-    tk.Button(frame, text="📄 파일 백업", command=handle_custom_backup).grid(row=2, column=0, pady=5, sticky="w", padx=10)
-    tk.Button(frame, text="📁 디렉토리 백업", command=handle_custom_directory_backup).grid(row=2, column=1, pady=5, sticky="w")
-    tk.Button(frame, text="♻️ 복원", command=handle_restore).grid(row=3, column=0, pady=5, sticky="w", padx=10)
-    tk.Button(frame, text="🗑️ 삭제", command=handle_delete).grid(row=3, column=1, pady=5, sticky="w")
+    tk.Button(frame, text="파일 백업", command=handle_custom_backup).grid(row=2, column=0, pady=5, sticky="w", padx=10)
+    tk.Button(frame, text="디렉토리 백업", command=handle_custom_directory_backup).grid(row=2, column=1, pady=5, sticky="w")
+    tk.Button(frame, text="복원", command=handle_restore).grid(row=3, column=0, pady=5, sticky="w", padx=10)
+    tk.Button(frame, text="삭제", command=handle_delete).grid(row=3, column=1, pady=5, sticky="w")
 
     refresh_list()
     return frame
